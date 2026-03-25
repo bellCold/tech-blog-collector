@@ -27,7 +27,9 @@ class RssCollector(
         return try {
             val items = rssReader.read(rssUrl).toList()
             val newPosts = items.mapNotNull { item ->
-                val postUrl = item.link.orElse(null) ?: return@mapNotNull null
+                val rawUrl = item.link.orElse(null) ?: return@mapNotNull null
+                val postUrl = if (rawUrl.startsWith("http")) rawUrl
+                    else source.url.trimEnd('/') + "/" + rawUrl.trimStart('/')
                 if (blogPostRepository.existsByUrl(postUrl)) return@mapNotNull null
 
                 val rawDescription = item.description.orElse(null)
