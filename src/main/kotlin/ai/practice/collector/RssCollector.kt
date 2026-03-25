@@ -3,6 +3,7 @@ package ai.practice.collector
 import ai.practice.domain.BlogPost
 import ai.practice.domain.BlogSource
 import ai.practice.repository.BlogPostRepository
+import ai.practice.summarizer.Summarizer
 import com.apptasticsoftware.rssreader.RssReader
 import org.jsoup.Jsoup
 import org.slf4j.LoggerFactory
@@ -14,7 +15,8 @@ import java.util.*
 
 @Component
 class RssCollector(
-    private val blogPostRepository: BlogPostRepository
+    private val blogPostRepository: BlogPostRepository,
+    private val summarizer: Summarizer
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
     private val rssReader = RssReader()
@@ -30,12 +32,16 @@ class RssCollector(
 
                 val rawDescription = item.description.orElse(null)
                 val cleanText = rawDescription?.let { Jsoup.parse(it).text() }
+                val title = item.title.orElse("Untitled")
+                val summary = if (!cleanText.isNullOrBlank()) {
+                    summarizer.summarize(title, cleanText) ?: cleanText.take(200)
+                } else null
 
                 BlogPost(
                     blogSource = source,
-                    title = item.title.orElse("Untitled"),
+                    title = title,
                     content = cleanText,
-                    summary = cleanText?.take(200),
+                    summary = summary,
                     url = postUrl,
                     author = item.author.orElse(null),
                     publishedAt = item.pubDate.orElse(null)?.let { parseDate(it) }

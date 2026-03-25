@@ -17,7 +17,7 @@ class BlogPostController(
     @GetMapping
     fun findAll(
         @RequestParam(required = false) sourceId: Long?,
-        @PageableDefault(size = 20) pageable: Pageable
+        @PageableDefault(size = 20, sort = ["publishedAt"], direction = org.springframework.data.domain.Sort.Direction.DESC) pageable: Pageable
     ): PageResponse<BlogPostListResponse> {
         return blogPostService.findAll(sourceId, pageable)
     }
@@ -30,7 +30,7 @@ class BlogPostController(
     @GetMapping("/search")
     fun search(
         @RequestParam keyword: String,
-        @PageableDefault(size = 20) pageable: Pageable
+        @PageableDefault(size = 20, sort = ["publishedAt"], direction = org.springframework.data.domain.Sort.Direction.DESC) pageable: Pageable
     ): PageResponse<BlogPostListResponse> {
         return blogPostService.search(keyword, pageable)
     }
