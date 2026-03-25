@@ -10,6 +10,7 @@ data class BlogPostListResponse(
     val url: String,
     val author: String?,
     val sourceName: String,
+    val tags: List<String>,
     val publishedAt: LocalDateTime?
 ) {
     companion object {
@@ -20,6 +21,7 @@ data class BlogPostListResponse(
             url = post.url,
             author = post.author,
             sourceName = post.blogSource.name,
+            tags = post.tags?.split(",")?.map { it.trim() }?.filter { it.isNotBlank() } ?: emptyList(),
             publishedAt = post.publishedAt
         )
     }
@@ -33,6 +35,7 @@ data class BlogPostDetailResponse(
     val url: String,
     val author: String?,
     val source: BlogSourceResponse,
+    val tags: List<String>,
     val publishedAt: LocalDateTime?,
     val collectedAt: LocalDateTime
 ) {
@@ -45,6 +48,7 @@ data class BlogPostDetailResponse(
             url = post.url,
             author = post.author,
             source = BlogSourceResponse.from(post.blogSource),
+            tags = post.tags?.split(",")?.map { it.trim() }?.filter { it.isNotBlank() } ?: emptyList(),
             publishedAt = post.publishedAt,
             collectedAt = post.collectedAt
         )

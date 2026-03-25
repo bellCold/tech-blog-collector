@@ -34,6 +34,9 @@ class BlogPost(
     @Column(length = 100)
     var author: String? = null,
 
+    @Column(length = 200)
+    var tags: String? = null,
+
     var publishedAt: LocalDateTime? = null,
 
     @Column(nullable = false)

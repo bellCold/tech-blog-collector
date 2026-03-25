@@ -33,15 +33,16 @@ class RssCollector(
                 val rawDescription = item.description.orElse(null)
                 val cleanText = rawDescription?.let { Jsoup.parse(it).text() }
                 val title = item.title.orElse("Untitled")
-                val summary = if (!cleanText.isNullOrBlank()) {
-                    summarizer.summarize(title, cleanText) ?: cleanText.take(200)
+                val result = if (!cleanText.isNullOrBlank()) {
+                    summarizer.summarize(title, cleanText)
                 } else null
 
                 BlogPost(
                     blogSource = source,
                     title = title,
                     content = cleanText,
-                    summary = summary,
+                    summary = result?.summary ?: cleanText?.take(200),
+                    tags = result?.tags?.joinToString(","),
                     url = postUrl,
                     author = item.author.orElse(null),
                     publishedAt = item.pubDate.orElse(null)?.let { parseDate(it) }

@@ -17,9 +17,15 @@ class BlogPostController(
     @GetMapping
     fun findAll(
         @RequestParam(required = false) sourceId: Long?,
+        @RequestParam(required = false) tag: String?,
         @PageableDefault(size = 20, sort = ["publishedAt"], direction = org.springframework.data.domain.Sort.Direction.DESC) pageable: Pageable
     ): PageResponse<BlogPostListResponse> {
-        return blogPostService.findAll(sourceId, pageable)
+        return blogPostService.findAll(sourceId, tag, pageable)
+    }
+
+    @GetMapping("/tags")
+    fun getTags(): List<String> {
+        return blogPostService.getAllTags()
     }
 
     @GetMapping("/{id}")

@@ -15,11 +15,11 @@ class BlogPostService(
     private val blogPostRepository: BlogPostRepository
 ) {
 
-    fun findAll(sourceId: Long?, pageable: Pageable): PageResponse<BlogPostListResponse> {
-        val page = if (sourceId != null) {
-            blogPostRepository.findByBlogSourceId(sourceId, pageable)
-        } else {
-            blogPostRepository.findAll(pageable)
+    fun findAll(sourceId: Long?, tag: String?, pageable: Pageable): PageResponse<BlogPostListResponse> {
+        val page = when {
+            tag != null -> blogPostRepository.findByTag(tag, pageable)
+            sourceId != null -> blogPostRepository.findByBlogSourceId(sourceId, pageable)
+            else -> blogPostRepository.findAll(pageable)
         }
         return PageResponse.from(page) { BlogPostListResponse.from(it) }
     }
@@ -28,6 +28,14 @@ class BlogPostService(
         val post = blogPostRepository.findByIdWithSource(id)
             ?: throw NotFoundException("BlogPost not found: id=$id")
         return BlogPostDetailResponse.from(post)
+    }
+
+    fun getAllTags(): List<String> {
+        return blogPostRepository.findAllTags()
+            .flatMap { it.split(",").map { t -> t.trim() } }
+            .filter { it.isNotBlank() }
+            .distinct()
+            .sorted()
     }
 
     fun search(keyword: String, pageable: Pageable): PageResponse<BlogPostListResponse> {

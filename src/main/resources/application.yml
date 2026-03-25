@@ -24,4 +24,4 @@ gemini:
 
 ollama:
   url: http://localhost:11434
-  model: gemma3:4b
+  model: gemma3:27b

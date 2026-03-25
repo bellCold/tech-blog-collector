@@ -21,11 +21,12 @@ class SummaryUpdateService(
             val posts = blogPostRepository.findAll(PageRequest.of(page, 20))
             for (post in posts.content) {
                 if (!post.content.isNullOrBlank()) {
-                    val newSummary = summarizer.summarize(post.title, post.content!!)
-                    if (newSummary != null) {
-                        post.summary = newSummary
+                    val result = summarizer.summarize(post.title, post.content!!)
+                    if (result != null) {
+                        post.summary = result.summary
+                        post.tags = result.tags.joinToString(",")
                         updated++
-                        log.info("Updated summary [$updated]: ${post.title}")
+                        log.info("Updated [$updated]: ${post.title} → tags: ${result.tags}")
                     }
                 }
             }

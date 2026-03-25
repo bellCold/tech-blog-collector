@@ -13,7 +13,7 @@ class GeminiSummarizer(
     private val log = LoggerFactory.getLogger(javaClass)
     private val restClient = RestClient.create()
 
-    override fun summarize(title: String, content: String): String? {
+    override fun summarize(title: String, content: String): SummarizeResult? {
         if (content.isBlank() || apiKey.isBlank()) return null
 
         val truncated = content.take(3000)
@@ -36,8 +36,9 @@ class GeminiSummarizer(
                 .retrieve()
                 .body(GeminiResponse::class.java)
 
-            response?.candidates?.firstOrNull()
-                ?.content?.parts?.firstOrNull()?.text
+            val text = response?.candidates?.firstOrNull()
+                ?.content?.parts?.firstOrNull()?.text ?: return null
+            SummarizeResult(summary = text.trim(), tags = emptyList())
         } catch (e: Exception) {
             log.error("Gemini summarization failed for '$title': ${e.message}")
             null
