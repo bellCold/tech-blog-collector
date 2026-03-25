@@ -27,8 +27,8 @@ class CollectorController(
     }
 
     @PostMapping("/summarize")
-    fun updateSummaries(): Map<String, Any> {
-        val count = summaryUpdateService.updateAllSummaries()
-        return mapOf("message" to "Summary update finished", "updated" to count)
+    fun updateSummaries(): Map<String, String> {
+        summaryUpdateService.updateAllSummaries()
+        return mapOf("message" to "Summary update started in background")
     }
 }

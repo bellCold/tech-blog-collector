@@ -83,4 +83,40 @@ class BlogPostTest {
             { assertEquals("작성자", post.author) }
         )
     }
+
+    @Test
+    fun `tags 필드를 설정하고 조회할 수 있다`() {
+        val post = BlogPost(
+            blogSource = createSource(),
+            title = "태그 테스트",
+            url = "https://test.com/tags",
+            tags = "백엔드,DevOps"
+        )
+
+        assertEquals("백엔드,DevOps", post.tags)
+    }
+
+    @Test
+    fun `tags 기본값은 null이다`() {
+        val post = BlogPost(
+            blogSource = createSource(),
+            title = "태그 없음",
+            url = "https://test.com/no-tags"
+        )
+
+        assertNull(post.tags)
+    }
+
+    @Test
+    fun `tags를 수정할 수 있다`() {
+        val post = BlogPost(
+            blogSource = createSource(),
+            title = "태그 수정",
+            url = "https://test.com/update-tags"
+        )
+
+        post.tags = "프론트엔드,AI/ML"
+
+        assertEquals("프론트엔드,AI/ML", post.tags)
+    }
 }

@@ -160,6 +160,33 @@ class BlogPostRepositoryTest @Autowired constructor(
     }
 
     @Test
+    fun `태그로 글을 조회한다`() {
+        blogPostRepository.save(createPost(title = "Spring 글", url = "https://test.com/t1").apply { tags = "백엔드,DevOps" })
+        blogPostRepository.save(createPost(title = "React 글", url = "https://test.com/t2").apply { tags = "프론트엔드" })
+        blogPostRepository.save(createPost(title = "K8s 글", url = "https://test.com/t3").apply { tags = "DevOps,인프라" })
+        flushAndClear()
+
+        val page = blogPostRepository.findByTag("백엔드", PageRequest.of(0, 10))
+
+        assertEquals(1, page.totalElements)
+        assertEquals("Spring 글", page.content[0].title)
+    }
+
+    @Test
+    fun `전체 태그 목록을 조회한다`() {
+        blogPostRepository.save(createPost(url = "https://test.com/t1").apply { tags = "백엔드,DevOps" })
+        blogPostRepository.save(createPost(url = "https://test.com/t2").apply { tags = "프론트엔드" })
+        blogPostRepository.save(createPost(url = "https://test.com/t3").apply { tags = null })
+        flushAndClear()
+
+        val tags = blogPostRepository.findAllTags()
+
+        assertEquals(2, tags.size)
+        assertTrue(tags.contains("백엔드,DevOps"))
+        assertTrue(tags.contains("프론트엔드"))
+    }
+
+    @Test
     fun `소스를 삭제하면 연관된 글도 삭제된다`() {
         blogPostRepository.save(createPost(blogSource = source1, url = "https://test.com/cascade-1"))
         blogPostRepository.save(createPost(blogSource = source1, url = "https://test.com/cascade-2"))
