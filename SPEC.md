@@ -81,34 +81,34 @@
 ## 구현 체크리스트
 
 ### Phase 1: 빌드 설정
-- [ ] build.gradle.kts — plugin.jpa, 의존성 추가
-- [ ] application.yml — MySQL, JPA 설정
+- [x] build.gradle.kts — plugin.jpa, 의존성 추가
+- [x] application.yml — MySQL, JPA 설정
 
 ### Phase 2: 도메인/리포지토리
-- [ ] SourceType enum
-- [ ] BlogSource 엔티티
-- [ ] BlogPost 엔티티
-- [ ] BlogSourceRepository
-- [ ] BlogPostRepository
+- [x] SourceType enum
+- [x] BlogSource 엔티티
+- [x] BlogPost 엔티티
+- [x] BlogSourceRepository
+- [x] BlogPostRepository
 
 ### Phase 3: 소스 CRUD API
-- [ ] DTO (CreateRequest, UpdateRequest, Response, ErrorResponse)
-- [ ] NotFoundException
-- [ ] BlogSourceService
-- [ ] BlogSourceController (POST/GET/PUT/DELETE)
-- [ ] GlobalExceptionHandler
+- [x] DTO (CreateRequest, UpdateRequest, Response, ErrorResponse)
+- [x] NotFoundException
+- [x] BlogSourceService
+- [x] BlogSourceController (POST/GET/PUT/DELETE)
+- [x] GlobalExceptionHandler
 
 ### Phase 4: 글 조회/검색 API
-- [ ] DTO (ListResponse, DetailResponse, PageResponse)
-- [ ] BlogPostService
-- [ ] BlogPostController (목록/상세/검색)
+- [x] DTO (ListResponse, DetailResponse, PageResponse)
+- [x] BlogPostService
+- [x] BlogPostController (목록/상세/검색)
 
 ### Phase 5: RSS 수집기
-- [ ] RssCollector
-- [ ] SchedulingConfig
-- [ ] CollectorScheduler
-- [ ] CollectorController (수동 트리거)
+- [x] RssCollector
+- [x] SchedulingConfig
+- [x] CollectorScheduler
+- [x] CollectorController (수동 트리거)
 
 ### Phase 6: 웹 크롤러
-- [ ] BlogSource 크롤링 셀렉터 필드 추가
-- [ ] WebCrawlCollector
+- [x] BlogSource 크롤링 셀렉터 필드 추가
+- [x] WebCrawlCollector

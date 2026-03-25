@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: practice
+  datasource:
+    url: jdbc:mysql://localhost:3306/tech_blog?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+    username: root
+    password: ${DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+    show-sql: true
+
+collector:
+  cron: "0 0 */2 * * *"
