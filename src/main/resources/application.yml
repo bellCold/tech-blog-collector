@@ -1,11 +1,6 @@
 spring:
   application:
     name: practice
-  datasource:
-    url: jdbc:mysql://localhost:3306/tech_blog?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
-    username: root
-    password: ${DB_PASSWORD:root}
-    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
@@ -23,5 +18,5 @@ gemini:
   model: gemini-2.0-flash
 
 ollama:
-  url: http://localhost:11434
+  url: ${OLLAMA_URL:http://localhost:11434}
   model: gemma3:27b

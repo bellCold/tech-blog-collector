@@ -2,11 +2,9 @@ package ai.practice.summarizer
 
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Primary
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
 
-@Primary
 @Component
 class OllamaSummarizer(
     @Value("\${ollama.url:http://localhost:11434}") private val ollamaUrl: String,
