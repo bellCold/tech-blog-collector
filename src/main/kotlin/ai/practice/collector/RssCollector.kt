@@ -19,7 +19,9 @@ class RssCollector(
     private val summarizer: Summarizer
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
-    private val rssReader = RssReader()
+    private val rssReader = RssReader().apply {
+        setUserAgent("Mozilla/5.0 (compatible; TechBlogCollector/1.0)")
+    }
 
     fun collect(source: BlogSource): List<BlogPost> {
         val rssUrl = source.rssUrl ?: return emptyList()

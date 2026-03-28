@@ -7,5 +7,6 @@ import org.springframework.boot.runApplication
 class PracticeApplication
 
 fun main(args: Array<String>) {
+    System.setProperty("jdk.xml.maxGeneralEntitySizeLimit", "0")
     runApplication<PracticeApplication>(*args)
 }
