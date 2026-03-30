@@ -12,7 +12,7 @@ class KeepAliveScheduler(
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
 
-    @Scheduled(fixedRate = 2 * 60 * 1000)
+    @Scheduled(fixedRate = 3 * 60 * 1000)
     fun pingDatabase() {
         try {
             dataSource.connection.use { conn ->
@@ -23,19 +23,18 @@ class KeepAliveScheduler(
             log.debug("Database keep-alive ping successful")
         } catch (e: Exception) {
             log.warn("Database keep-alive ping failed: ${e.message}")
-            evictBrokenConnections()
+            tryEvictConnections()
         }
     }
 
-    private fun evictBrokenConnections() {
+    private fun tryEvictConnections() {
         try {
             val hikariDs = dataSource as? HikariDataSource ?: return
             val pool = hikariDs.hikariPoolMXBean ?: return
             pool.softEvictConnections()
-            log.info("Evicted broken connections from pool. total={}, active={}, idle={}, waiting={}",
-                pool.totalConnections, pool.activeConnections, pool.idleConnections, pool.threadsAwaitingConnection)
+            log.info("Evicted broken connections from pool")
         } catch (e: Exception) {
-            log.warn("Failed to evict broken connections: ${e.message}")
+            log.warn("Failed to evict connections: ${e.message}")
         }
     }
 }

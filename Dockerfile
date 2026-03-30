@@ -10,4 +10,4 @@ FROM eclipse-temurin:24-jre
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-XX:+UseSerialGC", "-Xss512k", "-XX:MaxRAMPercentage=75.0", "-Dspring.jpa.defer-datasource-initialization=false", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-XX:+UseSerialGC", "-Xss512k", "-XX:MaxRAMPercentage=75.0", "-Dspring.jpa.defer-datasource-initialization=false", "-Djdk.xml.totalEntitySizeLimit=0", "-jar", "app.jar"]

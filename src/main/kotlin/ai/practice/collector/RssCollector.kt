@@ -8,10 +8,15 @@ import com.apptasticsoftware.rssreader.RssReader
 import org.jsoup.Jsoup
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import java.io.ByteArrayInputStream
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+import java.time.Duration
 import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 @Component
 class RssCollector(
@@ -19,15 +24,22 @@ class RssCollector(
     private val summarizer: Summarizer
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
-    private val rssReader = RssReader().apply {
-        setUserAgent("Mozilla/5.0 (compatible; TechBlogCollector/1.0)")
-    }
+    private val rssReader = RssReader()
+    private val httpClient = HttpClient.newBuilder()
+        .connectTimeout(Duration.ofSeconds(15))
+        .followRedirects(HttpClient.Redirect.NORMAL)
+        .build()
 
     fun collect(source: BlogSource): List<BlogPost> {
         val rssUrl = source.rssUrl ?: return emptyList()
 
         return try {
-            val items = rssReader.read(rssUrl).toList()
+            val xml = fetchRss(rssUrl) ?: return emptyList<BlogPost>().also {
+                log.warn("Failed to fetch RSS from ${source.name}: empty response")
+            }
+            val cleanedXml = sanitizeXml(xml)
+            val inputStream = ByteArrayInputStream(cleanedXml.toByteArray(Charsets.UTF_8))
+            val items = rssReader.read(inputStream).toList()
             val newPosts = items.mapNotNull { item ->
                 val rawUrl = item.link.orElse(null) ?: return@mapNotNull null
                 val postUrl = if (rawUrl.startsWith("http")) rawUrl
@@ -60,6 +72,33 @@ class RssCollector(
             log.error("Failed to collect RSS from ${source.name}: ${e.message}", e)
             emptyList()
         }
+    }
+
+    private fun fetchRss(url: String): String? {
+        val request = HttpRequest.newBuilder()
+            .uri(URI.create(url))
+            .header("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36")
+            .header("Accept", "application/rss+xml, application/xml, text/xml, */*")
+            .timeout(Duration.ofSeconds(30))
+            .GET()
+            .build()
+
+        val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
+        if (response.statusCode() != 200) {
+            log.warn("RSS fetch failed for $url: HTTP ${response.statusCode()}")
+            return null
+        }
+        return response.body()
+    }
+
+    private fun sanitizeXml(xml: String): String {
+        val sb = StringBuilder(xml.length)
+        for (ch in xml) {
+            if (ch == '\t' || ch == '\n' || ch == '\r' || ch in '\u0020'..'\uFFFD') {
+                sb.append(ch)
+            }
+        }
+        return sb.toString()
     }
 
     private fun parseDate(dateStr: String): LocalDateTime? {

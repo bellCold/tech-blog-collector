@@ -1,17 +1,15 @@
 spring:
   datasource:
-    url: ${DATABASE_URL}
+    url: ${DATABASE_URL}?connectTimeout=15&socketTimeout=60&tcpKeepAlive=true
     driver-class-name: org.postgresql.Driver
     hikari:
-      maximum-pool-size: 5
-      minimum-idle: 1
-      max-lifetime: 600000
+      maximum-pool-size: 3
+      minimum-idle: 0
+      max-lifetime: 540000
       idle-timeout: 300000
-      keepalive-time: 60000
-      connection-timeout: 60000
-      validation-timeout: 10000
-      connection-test-query: SELECT 1
-      initialization-fail-timeout: -1
+      keepalive-time: 120000
+      connection-timeout: 30000
+      validation-timeout: 5000
   jpa:
     open-in-view: false
     show-sql: false
