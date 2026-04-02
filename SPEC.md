@@ -28,6 +28,16 @@
 | collectedAt | LocalDateTime | NOT NULL |
 | createdAt | LocalDateTime | NOT NULL |
 
+### VisitorLog
+| 필드 | 타입 | 제약 |
+|------|------|------|
+| id | Long | PK, auto increment |
+| ipAddress | String | NOT NULL, max 45 |
+| visitDate | LocalDate | NOT NULL |
+| createdAt | LocalDateTime | NOT NULL |
+
+- `UNIQUE(ipAddress, visitDate)`
+
 ---
 
 ## API 엔드포인트
@@ -48,6 +58,12 @@
 | GET | /{id} | - | BlogPostDetailResponse |
 | GET | /search | keyword, page, size | PageResponse\<BlogPostListResponse\> |
 
+### 방문자 `/api/visitors`
+| Method | Path | 설명 | Response |
+|--------|------|------|----------|
+| POST | / | 방문 기록 (IP 기반, 하루 1회) | 201 |
+| GET | / | 오늘 방문자수 + 총 방문자수 | VisitorResponse |
+
 ### 수집 `/api/collector`
 | Method | Path | 설명 |
 |--------|------|------|
@@ -65,6 +81,8 @@
 **BlogPostDetailResponse**: `id, title, content, summary, url, author, source(BlogSourceResponse), publishedAt, collectedAt`
 
 **PageResponse\<T\>**: `content, page, size, totalElements, totalPages`
+
+**VisitorResponse**: `todayCount, totalCount`
 
 **ErrorResponse**: `status, message, timestamp`
 
@@ -112,3 +130,10 @@
 ### Phase 6: 웹 크롤러
 - [x] BlogSource 크롤링 셀렉터 필드 추가
 - [x] WebCrawlCollector
+
+### Phase 7: 방문자 추적
+- [x] VisitorLog 엔티티
+- [x] VisitorLogRepository
+- [x] VisitorDto (VisitorResponse)
+- [x] VisitorService
+- [x] VisitorController (POST/GET)
