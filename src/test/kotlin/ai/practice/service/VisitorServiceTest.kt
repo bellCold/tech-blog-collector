@@ -47,13 +47,16 @@ class VisitorServiceTest {
 
     @Test
     fun `방문자 통계를 조회한다`() {
-        whenever(visitorLogRepository.countByVisitDate(LocalDate.now())).thenReturn(10)
+        val today = LocalDate.now()
+        whenever(visitorLogRepository.countByVisitDate(today)).thenReturn(10)
+        whenever(visitorLogRepository.countByVisitDate(today.minusDays(1))).thenReturn(50)
         whenever(visitorLogRepository.countDistinctIpAddress()).thenReturn(100)
 
         val response = visitorService.getVisitorStats()
 
         assertAll(
             { assertEquals(10, response.todayCount) },
+            { assertEquals(50, response.yesterdayCount) },
             { assertEquals(100, response.totalCount) }
         )
     }

@@ -22,8 +22,10 @@ class VisitorService(
     }
 
     fun getVisitorStats(): VisitorResponse {
-        val todayCount = visitorLogRepository.countByVisitDate(LocalDate.now())
+        val today = LocalDate.now()
+        val todayCount = visitorLogRepository.countByVisitDate(today)
+        val yesterdayCount = visitorLogRepository.countByVisitDate(today.minusDays(1))
         val totalCount = visitorLogRepository.countDistinctIpAddress()
-        return VisitorResponse(todayCount = todayCount, totalCount = totalCount)
+        return VisitorResponse(todayCount = todayCount, yesterdayCount = yesterdayCount, totalCount = totalCount)
     }
 }
